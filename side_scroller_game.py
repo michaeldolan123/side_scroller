@@ -4,7 +4,7 @@ import random, time
  
 pygame.init()
 
-FPS = 60
+FPS = 240
 FramePerSec = pygame.time.Clock()
 
 BLUE  = (0, 0, 255)
@@ -13,8 +13,8 @@ GREEN = (0, 255, 0)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
-SCREEN_WIDTH = 1500
-SCREEN_HEIGHT = 1000
+SCREEN_WIDTH = 2000
+SCREEN_HEIGHT = 500
 SPEED = 5
 SCORE = 0
 
@@ -23,7 +23,10 @@ font_small = pygame.font.SysFont("symbol", 20)
 
 background = pygame.image.load("road.png")
 
-DISPLAYSURF = pygame.display.set_mode((SCREEN_HEIGHT,SCREEN_WIDTH))
+rect_of_background = background.get_rect ()
+rect_of_background.center = (SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+
+DISPLAYSURF = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 DISPLAYSURF.fill(WHITE)
 pygame.display.set_caption("Game")
 
@@ -53,16 +56,16 @@ class Player(pygame.sprite.Sprite):
         pressed_keys = pygame.key.get_pressed()
         
         if pressed_keys[K_LEFT]:
-            self.rect.move_ip(-10, 0)
+            self.rect.move_ip(-20, 0)
         
         if pressed_keys[K_RIGHT]:
-            self.rect.move_ip(10, 0)
+            self.rect.move_ip(20, 0)
 
         if pressed_keys[K_UP]:
-            self.rect.move_ip(0, 10)
+            self.rect.move_ip(0, -20)
                 
         if pressed_keys[K_DOWN]:
-            self.rect.move_ip(0, -10)
+            self.rect.move_ip(0, 20)
 
 
         
@@ -80,7 +83,8 @@ INC_SPEED = pygame.USEREVENT + 1
 pygame.time.set_timer(INC_SPEED, 1000)
 
 while True:
-      
+    DISPLAYSURF.blit(pygame.image.load("road.png"), (0,0))
+
     for event in pygame.event.get():
         if event.type == INC_SPEED:
               SPEED += 1     
