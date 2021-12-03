@@ -2,6 +2,7 @@ import pygame, sys
 from pygame import display
 from pygame.locals import *
 import random, time
+from pygame import mixer
  
 pygame.init()
 
@@ -32,13 +33,15 @@ DISPLAYSURF.fill(WHITE)
 pygame.display.set_caption("Game")
 
 class Enemy(pygame.sprite.Sprite):
-      def __init__(self):
+    def __init__(self):
         super().__init__() 
         self.image = pygame.image.load("side_scroller.png")
         self.rect = self.image.get_rect()
         self.rect.center = (SCREEN_WIDTH, random.randint(0,SCREEN_HEIGHT))
 
-      def move(self):
+
+
+    def move(self):
         global SCORE
         self.rect.move_ip(-SPEED, 0)
         if (self.rect.left <= 0):
@@ -64,24 +67,29 @@ class Player(pygame.sprite.Sprite):
                 
         if pressed_keys[K_DOWN] and self.rect.bottom <= SCREEN_HEIGHT:
             self.rect.move_ip(0, 10)
-
-
-        
+      
                   
 player = Player()
 E1 = Enemy()
+E2 = Enemy()
+
 
 enemies = pygame.sprite.Group()
 enemies.add(E1)
+enemies.add(E2)
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
 all_sprites.add(E1)
+all_sprites.add(E2)
 
 INC_SPEED = pygame.USEREVENT + 1
 pygame.time.set_timer(INC_SPEED, 1000)
 
 DISPLAYSURF.blit(pygame.image.load("road.png"), (0, 0))
 
+soundobj = pygame.mixer.Sound('mocha_frapp.mp3')
+soundobj.play()
+soundobj.set_volume(0.2)
 while True:
     
     for event in pygame.event.get():
@@ -91,7 +99,7 @@ while True:
             pygame.quit()
             sys.exit()
 
-    # DISPLAYSURF.blit(background, (0,0))
+    DISPLAYSURF.blit(background, rect_of_background)
     scores = font_small.render(str(SCORE), True, BLACK)
     DISPLAYSURF.blit(scores, (10,10))
 
@@ -102,23 +110,19 @@ while True:
     game_over = font.render(f"Game Over your score: {SCORE}", True, BLACK)
 
     if pygame.sprite.spritecollideany(player, enemies):
-                   
-          DISPLAYSURF.fill(NOT_RED)
-          DISPLAYSURF.blit(game_over, (30,250))
-          
-          pygame.display.update()
-          for entity in all_sprites:
-                entity.kill() 
-          time.sleep(2)
-          pygame.quit()
-          sys.exit()   
-          
-    pygame.display.update()      
-    if rect_of_background.right > SCREEN_WIDTH:
-        rect_of_background.center = (SCREEN_WIDTH/2 - 3, SCREEN_HEIGHT/2)
-        DISPLAYSURF.blit(background, rect_of_background)
-    # if rect_of_background.right <= SCREEN_WIDTH:
-    #     rect_of_background.center = (SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+        soundobj1 = pygame.mixer.Sound('hit.wav')
+        soundobj1.play()  
+        soundobj1.set_volume(5)
+        DISPLAYSURF.fill(NOT_RED)
+        DISPLAYSURF.blit(game_over, (30,250))
         
+        pygame.display.update()
+        for entity in all_sprites:
+            entity.kill() 
+        time.sleep(2)
+        pygame.quit()
+        sys.exit()   
+        
+
     pygame.display.update()
     FramePerSec.tick(FPS)
